@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Google Slides with Logo</title>
+    <style>
+        /* Set the page background color */
+        body {
+            background-color: #156703;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Container with overflow hidden to crop black space */
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            max-width: 1080px;
+            height: 100%;
+            max-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Scale iframe to remove black borders */
+        .iframe-container iframe {
+            position: absolute;
+            top: -5%; /* Adjust as needed */
+            left: -5%; /* Adjust as needed */
+            width: 110%; /* Zoom to remove black space */
+            height: 110%;
+            border: none;
+            transform: scale(1.1); /* Scale up slightly */
+            transform-origin: center;
+        }
+
+        /* Logo styling */
+        .logo {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 25%;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="iframe-container">
+        <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vTUwt992FJMe0v83vp4P3-CJ-iR7Hr8JQ_bk7j9xbXA4FsCHcY9-GLE9rXWtlHbNLalrVpdkgKU03Uj/embed?start=true&loop=true&delayms=5000&rm=minimal"
+                allowfullscreen="true"
+                mozallowfullscreen="true"
+                webkitallowfullscreen="true">
+        </iframe>
+        <!-- Logo positioned over the iframe -->
+        <img src="https://images.squarespace-cdn.com/content/6419cb27ad88e97ebff5902d/f366a04b-91fa-4351-b533-b70607ff3ab6/qr_jewelry.png?content-type=image%2Fpng" alt="Logo" class="logo">
+    </div>
+</body>
+</html>
