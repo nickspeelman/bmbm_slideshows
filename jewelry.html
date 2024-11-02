@@ -77,13 +77,13 @@
     </div>
 
 <script>
-    
+
     let pressTimer;
 
     document.addEventListener('mousedown', (e) => {
         pressTimer = setTimeout(() => {
             window.history.back(); // Navigate back after a long press
-        }, 800); // Set the duration (in milliseconds) for a long press
+        }, 1000); // Set the duration (in milliseconds) for a long press
     });
 
     document.addEventListener('mouseup', (e) => {
