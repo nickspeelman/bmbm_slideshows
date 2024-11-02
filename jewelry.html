@@ -78,27 +78,19 @@
 
 <script>
 
-    let pressTimer;
+let startX;
 
-    document.addEventListener('mousedown', (e) => {
-        pressTimer = setTimeout(() => {
-            window.history.back(); // Navigate back after a long press
-        }, 4500); // Set the duration (in milliseconds) for a long press
-    });
+document.addEventListener('touchstart', function(e) {
+    startX = e.touches[0].clientX;
+});
 
-    document.addEventListener('mouseup', (e) => {
-        clearTimeout(pressTimer); // Clear the timer if the press is released early
-    });
+document.addEventListener('touchend', function(e) {
+    let endX = e.changedTouches[0].clientX;
+    if (startX - endX > 100) { // Swipe left detected
+        window.history.back();
+    }
+});
 
-    document.addEventListener('touchstart', (e) => {
-        pressTimer = setTimeout(() => {
-            window.history.back(); // Navigate back on long press
-        }, 4500);
-    });
-
-    document.addEventListener('touchend', (e) => {
-        clearTimeout(pressTimer);
-    });
 
 </script>
 </body>
