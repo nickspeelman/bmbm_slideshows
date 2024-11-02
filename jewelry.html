@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Embedded Google Slides with Logo</title>
+    <title>Embedded Google Slides with Banner and Logo</title>
     <style>
         /* Set the page background color */
         body {
@@ -36,6 +36,18 @@
             border: none;
             transform: scale(1.1); /* Scale up slightly */
             transform-origin: center;
+            z-index: -1; /* Ensures iframe is behind other elements */
+        }
+
+        /* Banner styling */
+        .banner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            max-width: 1080px;
+            height: auto;
+            opacity: .8; /* Same transparency as the logo */
         }
 
         /* Logo styling */
@@ -50,11 +62,15 @@
 </head>
 <body>
     <div class="iframe-container">
+        <!-- Banner positioned at the top of the iframe -->
+        <img src="https://images.squarespace-cdn.com/content/6419cb27ad88e97ebff5902d/7b17c84c-ac76-4f10-a76c-7695279847bc/instabanner.png?content-type=image%2Fpng" alt="Banner" class="banner">
+
         <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vTUwt992FJMe0v83vp4P3-CJ-iR7Hr8JQ_bk7j9xbXA4FsCHcY9-GLE9rXWtlHbNLalrVpdkgKU03Uj/embed?start=true&loop=true&delayms=5000&rm=minimal"
                 allowfullscreen="true"
                 mozallowfullscreen="true"
                 webkitallowfullscreen="true">
         </iframe>
+
         <!-- Logo positioned over the iframe -->
         <img src="https://images.squarespace-cdn.com/content/6419cb27ad88e97ebff5902d/f366a04b-91fa-4351-b533-b70607ff3ab6/qr_jewelry.png?content-type=image%2Fpng" alt="Logo" class="logo">
     </div>
