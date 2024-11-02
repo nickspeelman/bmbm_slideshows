@@ -14,6 +14,7 @@
             justify-content: center;
             height: 100vh;
             overflow: hidden;
+            touch-action: none;
         }
 
         /* Container with overflow hidden to crop black space */
@@ -74,5 +75,31 @@
         <!-- Logo positioned over the iframe -->
         <img src="https://images.squarespace-cdn.com/content/6419cb27ad88e97ebff5902d/f366a04b-91fa-4351-b533-b70607ff3ab6/qr_jewelry.png?content-type=image%2Fpng" alt="Logo" class="logo">
     </div>
+
+<script>
+    
+    let pressTimer;
+
+    document.addEventListener('mousedown', (e) => {
+        pressTimer = setTimeout(() => {
+            window.history.back(); // Navigate back after a long press
+        }, 800); // Set the duration (in milliseconds) for a long press
+    });
+
+    document.addEventListener('mouseup', (e) => {
+        clearTimeout(pressTimer); // Clear the timer if the press is released early
+    });
+
+    document.addEventListener('touchstart', (e) => {
+        pressTimer = setTimeout(() => {
+            window.history.back(); // Navigate back on long press
+        }, 800);
+    });
+
+    document.addEventListener('touchend', (e) => {
+        clearTimeout(pressTimer);
+    });
+
+</script>
 </body>
 </html>
