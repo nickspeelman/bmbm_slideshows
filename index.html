@@ -48,6 +48,13 @@
       border-color: #d4e9d4;
     }
   </style>
+  <script>
+    function navigateWithCacheBypass(url) {
+      // Append a unique query parameter to bypass cache
+      const uniqueUrl = url + "?cache_bypass=" + new Date().getTime();
+      window.location.href = uniqueUrl;
+    }
+  </script>
 </head>
 <body>
 
@@ -58,8 +65,8 @@
   <h2>Click a slideshow below to open it</h2>
 
   <p>
-    <a href="https://nickspeelman.github.io/bmbm_slideshows/jewelry.html" class="slideshow-button">Jewelry Slideshow</a>
-    <a href="https://nickspeelman.github.io/bmbm_slideshows/portfolio.html" class="slideshow-button">Portfolio Slideshow</a>
+    <button onclick="navigateWithCacheBypass('https://nickspeelman.github.io/bmbm_slideshows/jewelry.html')" class="slideshow-button">Jewelry Slideshow</button>
+    <button onclick="navigateWithCacheBypass('https://nickspeelman.github.io/bmbm_slideshows/portfolio.html')" class="slideshow-button">Portfolio Slideshow</button>
   </p>
 
 </body>
