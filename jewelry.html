@@ -40,17 +40,6 @@
             z-index: -1; /* Ensures iframe is behind other elements */
         }
 
-        /* Banner styling */
-        .banner {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            max-width: 1080px;
-            height: auto;
-            opacity: .8; /* Same transparency as the logo */
-        }
-
         /* Logo styling */
         .logo {
             position: absolute;
@@ -63,9 +52,7 @@
 </head>
 <body>
     <div class="iframe-container">
-        <!-- Banner positioned at the top of the iframe -->
-        <img src="https://images.squarespace-cdn.com/content/6419cb27ad88e97ebff5902d/7b17c84c-ac76-4f10-a76c-7695279847bc/instabanner.png?content-type=image%2Fpng" alt="Banner" class="banner">
-
+        
         <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vTUwt992FJMe0v83vp4P3-CJ-iR7Hr8JQ_bk7j9xbXA4FsCHcY9-GLE9rXWtlHbNLalrVpdkgKU03Uj/embed?start=true&loop=true&delayms=5000&rm=minimal"
                 allowfullscreen="true"
                 mozallowfullscreen="true"
@@ -80,16 +67,26 @@
 
 let startX;
 
-document.addEventListener('touchstart', function(e) {
-    startX = e.touches[0].clientX;
-});
+let tapCount = 0;
+let tapTimer;
 
-document.addEventListener('touchend', function(e) {
-    let endX = e.changedTouches[0].clientX;
-    if (startX - endX > 100) { // Swipe left detected
-        window.history.back();
+document.addEventListener('touchend', function() {
+    tapCount++;
+    
+    // Clear the timer if a tap is detected
+    clearTimeout(tapTimer);
+
+    // Set a timer to reset the tap count if the user doesn’t tap again quickly enough
+    tapTimer = setTimeout(function() {
+        tapCount = 0;
+    }, 500); // 500ms timeout for triple-tap detection
+
+    if (tapCount === 3) {
+        window.history.back(); // Trigger back navigation on triple tap
+        tapCount = 0; // Reset tap count after triggering the action
     }
 });
+
 
 
 </script>
