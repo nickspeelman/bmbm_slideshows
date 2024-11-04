@@ -127,7 +127,7 @@
         const textWidth = textElement.offsetWidth;
 
         // Calculate duration: longer text = longer duration
-        const duration = (textWidth + bannerWidth) / 50; // Adjust divisor to control speed
+        const duration = (textWidth + bannerWidth) / 70; // Adjust divisor to control speed
 
         // Set the animation with seamless effect
         textElement.style.animation = `scroll ${duration}s linear infinite`;
@@ -135,15 +135,17 @@
 
     // Inject animation keyframes after duration is set
     function injectKeyframes() {
-        const styleSheet = document.createElement("style");
-        styleSheet.innerHTML = `
-            @keyframes scroll {
-                0% { transform: translateX(100%); }
-                100% { transform: translateX(-100%); }
-            }
-        `;
-        document.head.appendChild(styleSheet);
-    }
+    const styleSheet = document.createElement("style");
+    styleSheet.innerHTML = `
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            90% { transform: translateX(-100%); } /* Slow down to the end */
+            100% { transform: translateX(-105%); } /* Speed up for the gap */
+        }
+    `;
+    document.head.appendChild(styleSheet);
+}
+
 
     // Triple-tap back navigation
     let tapCount = 0;
