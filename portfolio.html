@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Embedded Google Slides with Logo</title>
+    <title>Embedded Google Slides with Scrolling Banner</title>
     <style>
         /* Set the page background color */
         body {
@@ -14,9 +14,34 @@
             justify-content: center;
             height: 100vh;
             overflow: hidden;
+            touch-action: none;
+            flex-direction: column;
         }
 
-        /* Container with overflow hidden to crop black space */
+        /* Scrolling banner styling */
+        .scrolling-banner {
+            width: 100%;
+            background-color: #5B944F;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            padding: 10px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            text-align: center;
+        }
+
+        .scrolling-banner span {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+        }
+
+        /* Rest of your styling here */
         .iframe-container {
             position: relative;
             width: 100%;
@@ -26,37 +51,125 @@
             overflow: hidden;
         }
 
-        /* Scale iframe to remove black borders */
         .iframe-container iframe {
             position: absolute;
-            top: -5%; /* Adjust as needed */
-            left: -5%; /* Adjust as needed */
-            width: 110%; /* Zoom to remove black space */
+            top: -5%;
+            left: -5%;
+            width: 110%;
             height: 110%;
             border: none;
-            transform: scale(1.1); /* Scale up slightly */
+            transform: scale(1.1);
             transform-origin: center;
+            z-index: -1;
         }
 
-        /* Logo styling */
-        .logo {
+        .logo-bottom-right {
             position: absolute;
             bottom: 20px;
             right: 20px;
             width: 25%;
             opacity: 0.8;
         }
+
+        .logo-top-left {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 30%;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
+    <div class="scrolling-banner" id="banner">
+        <span>Loading banner text...</span>
+    </div>
+
     <div class="iframe-container">
         <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vS6OBZv1BUGCIISLH7vGBhg33TWt56k4xxODDKM4B6wxb40K7WYrL9TuVo8JspQ4rEh9DWplduhG5Bz/embed?start=true&loop=true&delayms=5000&rm=minimal"
                 allowfullscreen="true"
                 mozallowfullscreen="true"
                 webkitallowfullscreen="true">
         </iframe>
-        <!-- Logo positioned over the iframe -->
-        <img src="https://images.squarespace-cdn.com/content/6419cb27ad88e97ebff5902d/15a0a52e-7599-4659-801b-c578352ad98f/qr_portfolio.png?content-type=image%2Fpng" alt="Logo" class="logo">
+
+        <!-- Bottom-right logo -->
+        <img src="https://images.squarespace-cdn.com/content/6419cb27ad88e97ebff5902d/15a0a52e-7599-4659-801b-c578352ad98f/qr_portfolio.png?content-type=image%2Fpng" 
+             alt="Logo" class="logo-bottom-right">
+
+        <!-- Top-left logo -->
+        <img src="https://images.squarespace-cdn.com/content/6419cb27ad88e97ebff5902d/c27d203f-47af-44a3-a08a-34fea2126ad6/Logo_4+%281%29.png?content-type=image%2Fpng" 
+             alt="Logo" class="logo-top-left">
     </div>
+
+<script>
+    async function fetchBannerText() {
+        const url = 'https://script.google.com/macros/s/AKfycbwLsz61Dvt4paDSSsoxWEvpXmJgLOO67EtJATQ8sgaT16rxY9ppKQwqknlfSMxuGa6-/exec';
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            const bannerText = data.text;
+
+            // Insert the banner text and set up animation
+            const bannerElement = document.getElementById('banner');
+            bannerElement.innerHTML = `<span>${bannerText}</span>`;
+
+            // Set the scroll speed based on text width
+            setScrollSpeed(bannerElement.querySelector("span"));
+        } catch (error) {
+            console.error("Failed to load banner text", error);
+            document.getElementById('banner').innerHTML = "<span>Failed to load banner text</span>";
+        }
+    }
+
+    function setScrollSpeed(textElement) {
+        const bannerWidth = document.getElementById('banner').offsetWidth;
+        const textWidth = textElement.offsetWidth;
+
+        // Calculate duration: longer text = longer duration
+        const duration = (textWidth + bannerWidth) / 70; // Adjust divisor to control speed
+
+        // Set the animation with seamless effect
+        textElement.style.animation = `scroll ${duration}s linear infinite`;
+    }
+
+    // Inject animation keyframes after duration is set
+    function injectKeyframes() {
+    const styleSheet = document.createElement("style");
+    styleSheet.innerHTML = `
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            90% { transform: translateX(-100%); } /* Slow down to the end */
+            100% { transform: translateX(-105%); } /* Speed up for the gap */
+        }
+    `;
+    document.head.appendChild(styleSheet);
+}
+
+
+    // Triple-tap back navigation
+    let tapCount = 0;
+    let tapTimer;
+
+    document.addEventListener('touchend', function() {
+        tapCount++;
+        
+        clearTimeout(tapTimer);
+
+        tapTimer = setTimeout(function() {
+            tapCount = 0;
+        }, 500);
+
+        if (tapCount === 3) {
+            window.history.back();
+            tapCount = 0;
+        }
+    });
+
+    injectKeyframes();
+    fetchBannerText();
+</script>
 </body>
 </html>
+
+
