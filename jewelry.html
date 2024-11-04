@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Embedded Google Slides with Banner and Logo</title>
+    <title>Embedded Google Slides with Scrolling Banner</title>
     <style>
         /* Set the page background color */
         body {
@@ -15,9 +15,38 @@
             height: 100vh;
             overflow: hidden;
             touch-action: none;
+            flex-direction: column;
         }
 
-        /* Container with overflow hidden to crop black space */
+        /* Scrolling banner styling */
+        .scrolling-banner {
+            width: 100%;
+            background-color: #5B944F;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            padding: 10px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            text-align: center;
+        }
+
+        .scrolling-banner span {
+            display: inline-block;
+            padding-left: 100%;
+            animation: scroll 40s linear infinite;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Rest of your styling here */
         .iframe-container {
             position: relative;
             width: 100%;
@@ -27,68 +56,71 @@
             overflow: hidden;
         }
 
-        /* Scale iframe to remove black borders */
         .iframe-container iframe {
             position: absolute;
-            top: -5%; /* Adjust as needed */
-            left: -5%; /* Adjust as needed */
-            width: 110%; /* Zoom to remove black space */
+            top: -5%;
+            left: -5%;
+            width: 110%;
             height: 110%;
             border: none;
-            transform: scale(1.1); /* Scale up slightly */
+            transform: scale(1.1);
             transform-origin: center;
-            z-index: -1; /* Ensures iframe is behind other elements */
+            z-index: -1;
         }
 
-        /* Logo styling */
-        .logo {
+        .logo-bottom-right {
             position: absolute;
             bottom: 20px;
             right: 20px;
             width: 25%;
             opacity: 0.8;
         }
+
+        .logo-top-left {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 30%;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
+    <div class="scrolling-banner" id="banner">
+        <span>Loading banner text...</span>
+    </div>
+
     <div class="iframe-container">
-        
         <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vTUwt992FJMe0v83vp4P3-CJ-iR7Hr8JQ_bk7j9xbXA4FsCHcY9-GLE9rXWtlHbNLalrVpdkgKU03Uj/embed?start=true&loop=true&delayms=5000&rm=minimal"
                 allowfullscreen="true"
                 mozallowfullscreen="true"
                 webkitallowfullscreen="true">
         </iframe>
 
-        <!-- Logo positioned over the iframe -->
-        <img src="https://images.squarespace-cdn.com/content/6419cb27ad88e97ebff5902d/f366a04b-91fa-4351-b533-b70607ff3ab6/qr_jewelry.png?content-type=image%2Fpng" alt="Logo" class="logo">
+        <!-- Bottom-right logo -->
+        <img src="https://images.squarespace-cdn.com/content/6419cb27ad88e97ebff5902d/f366a04b-91fa-4351-b533-b70607ff3ab6/qr_jewelry.png?content-type=image%2Fpng" 
+             alt="Logo" class="logo-bottom-right">
+
+        <!-- Top-left logo -->
+        <img src="https://images.squarespace-cdn.com/content/6419cb27ad88e97ebff5902d/c27d203f-47af-44a3-a08a-34fea2126ad6/Logo_4+%281%29.png?content-type=image%2Fpng" 
+             alt="Logo" class="logo-top-left">
     </div>
 
 <script>
+    async function fetchBannerText() {
+        const url = 'https://script.google.com/macros/s/AKfycbxc3HnrGhU9EAHPB_U3BZxo7m1dPKSsDpG59JyteXX_0VokJ3rOtRoADBNOrz4VqdENDQ/exec';
 
-let startX;
-
-let tapCount = 0;
-let tapTimer;
-
-document.addEventListener('touchend', function() {
-    tapCount++;
-    
-    // Clear the timer if a tap is detected
-    clearTimeout(tapTimer);
-
-    // Set a timer to reset the tap count if the user doesn’t tap again quickly enough
-    tapTimer = setTimeout(function() {
-        tapCount = 0;
-    }, 500); // 500ms timeout for triple-tap detection
-
-    if (tapCount === 3) {
-        window.history.back(); // Trigger back navigation on triple tap
-        tapCount = 0; // Reset tap count after triggering the action
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            document.getElementById('banner').innerHTML = `<span>${data.text}</span>`;
+        } catch (error) {
+            console.error("Failed to load banner text", error);
+            document.getElementById('banner').innerHTML = "<span>Failed to load banner text</span>";
+        }
     }
-});
 
-
-
+    fetchBannerText();
 </script>
 </body>
 </html>
