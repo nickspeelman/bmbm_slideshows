@@ -37,13 +37,8 @@
 
         .scrolling-banner span {
             display: inline-block;
+            white-space: nowrap;
             padding-left: 100%;
-            animation: scroll 40s linear infinite;
-        }
-
-        @keyframes scroll {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
         }
 
         /* Rest of your styling here */
@@ -113,13 +108,63 @@
         try {
             const response = await fetch(url);
             const data = await response.json();
-            document.getElementById('banner').innerHTML = `<span>${data.text}</span>`;
+            const bannerText = data.text;
+
+            // Insert the banner text and set up animation
+            const bannerElement = document.getElementById('banner');
+            bannerElement.innerHTML = `<span>${bannerText}</span>`;
+
+            // Set the scroll speed based on text width
+            setScrollSpeed(bannerElement.querySelector("span"));
         } catch (error) {
             console.error("Failed to load banner text", error);
             document.getElementById('banner').innerHTML = "<span>Failed to load banner text</span>";
         }
     }
 
+    function setScrollSpeed(textElement) {
+        const bannerWidth = document.getElementById('banner').offsetWidth;
+        const textWidth = textElement.offsetWidth;
+
+        // Calculate duration: longer text = longer duration
+        const duration = (textWidth + bannerWidth) / 50; // Adjust divisor to control speed
+
+        // Set the animation with seamless effect
+        textElement.style.animation = `scroll ${duration}s linear infinite`;
+    }
+
+    // Inject animation keyframes after duration is set
+    function injectKeyframes() {
+        const styleSheet = document.createElement("style");
+        styleSheet.innerHTML = `
+            @keyframes scroll {
+                0% { transform: translateX(100%); }
+                100% { transform: translateX(-100%); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    }
+
+    // Triple-tap back navigation
+    let tapCount = 0;
+    let tapTimer;
+
+    document.addEventListener('touchend', function() {
+        tapCount++;
+        
+        clearTimeout(tapTimer);
+
+        tapTimer = setTimeout(function() {
+            tapCount = 0;
+        }, 500);
+
+        if (tapCount === 3) {
+            window.history.back();
+            tapCount = 0;
+        }
+    });
+
+    injectKeyframes();
     fetchBannerText();
 </script>
 </body>
