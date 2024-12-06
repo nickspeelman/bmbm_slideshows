@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded Google Slides with Scrolling Banner</title>
+    <style>
+        /* Set the page background color */
+        body {
+            background-color: #156703;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: none;
+            flex-direction: column;
+        }
+
+       /* Scrolling banner styling */
+        .scrolling-banner {
+            width: 100%;
+            background-color: #5B944F;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            padding: 10px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            box-sizing: border-box;
+            position: absolute;
+            top: 0;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        .scrolling-banner span {
+            display: inline-block;
+            white-space: nowrap;
+            /* Remove padding-left and rely on animation */
+        }
+
+
+        /* Rest of your styling here */
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            max-width: 1080px;
+            height: 100%;
+            max-height: 100vh;
+            overflow: hidden;
+        }
+
+        .iframe-container iframe {
+            position: absolute;
+            top: -5%;
+            left: -5%;
+            width: 110%;
+            height: 110%;
+            border: none;
+            transform: scale(1.1);
+            transform-origin: center;
+            z-index: -1;
+        }
+
+        .logo-bottom-right {
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+            width: 100%;
+            opacity: 0.9;
+        }
+
+        .logo-top-center {
+            position: absolute;
+            bottom: 20px; /* Adjust this value to position it closer or farther from the bottom */
+            left: 50%; /* Center horizontally */
+            transform: translateX(-50%); /* Maintain horizontal centering */
+            width: 45%;
+            opacity: 0.9;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="scrolling-banner" id="banner">
+        <span>Loading banner text...</span>
+    </div>
+
+    <div class="iframe-container">
+        <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQDdP67VZV3YFsfOLwzCGWCfeED4VcRvYZFPkQV3HnRgCmMBLrJnjjO2FsaK4EI4YR0YbGq-M8T3VFq/embed?start=true&loop=true&delayms=5000&rm=minimal"
+                allowfullscreen="true"
+                mozallowfullscreen="true"
+                webkitallowfullscreen="true">
+        </iframe>
+
+        <!-- Bottom-right logo -->
+        <img src="https://images.squarespace-cdn.com/content/6419cb27ad88e97ebff5902d/5f19ca43-5363-4a63-8d10-49aa6d86a904/instabanner.png?content-type=image%2Fpng"
+             alt="Logo" class="logo-bottom-right">
+
+        <!-- Top-left logo -->
+      
+        <img src="https://images.squarespace-cdn.com/content/6419cb27ad88e97ebff5902d/d602284b-3888-4049-b82c-63dc6ab1e48c/Logo.png?content-type=image%2Fpng" 
+             alt="Logo" class="logo-top-center">
+      
+    </div>
+
+    <script>
+        async function fetchBannerText() {
+            const url = 'https://script.google.com/macros/s/AKfycbxc3HnrGhU9EAHPB_U3BZxo7m1dPKSsDpG59JyteXX_0VokJ3rOtRoADBNOrz4VqdENDQ/exec';
+    
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const bannerText = data.text;
+    
+                // Insert the banner text and set up animation
+                const bannerElement = document.getElementById('banner');
+                bannerElement.innerHTML = `<span>${bannerText}</span>`;
+    
+                // Inject animation keyframes dynamically
+                const textElement = bannerElement.querySelector("span");
+                injectKeyframes(textElement);
+                setScrollSpeed(bannerElement, textElement);
+            } catch (error) {
+                console.error("Failed to load banner text", error);
+                document.getElementById('banner').innerHTML = "<span>Failed to load banner text</span>";
+            }
+        }
+    
+        function setScrollSpeed(bannerElement, textElement) {
+            const bannerWidth = bannerElement.offsetWidth;
+            const textWidth = textElement.offsetWidth;
+    
+            // Calculate duration: longer text = longer duration
+            const duration = (textWidth + bannerWidth) / 50; // Adjust divisor to control speed
+    
+            // Apply the animation with seamless effect
+            textElement.style.animation = `scroll ${duration}s linear infinite`;
+        }
+    
+        function injectKeyframes(textElement) {
+            const bannerWidth = document.getElementById('banner').offsetWidth;
+            const textWidth = textElement.offsetWidth;
+
+            // Dynamic overlap to reduce the gap
+            const overlap = Math.min(bannerWidth, textWidth) * 0.1; // Small overlap
+
+            const styleSheet = document.createElement("style");
+            styleSheet.innerHTML = `
+                @keyframes scroll {
+                    0% { transform: translateX(${bannerWidth}px); } /* Start just off-screen */
+                    100% { transform: translateX(-${textWidth + overlap}px); } /* Move fully out */
+                }
+            `;
+            document.head.appendChild(styleSheet);
+        }
+
+        // Call the function to fetch and start the banner
+        fetchBannerText();
+    
+
+
+    // Triple-tap back navigation
+    let tapCount = 0;
+    let tapTimer;
+
+    document.addEventListener('touchend', function() {
+        tapCount++;
+        
+        clearTimeout(tapTimer);
+
+        tapTimer = setTimeout(function() {
+            tapCount = 0;
+        }, 500);
+
+        if (tapCount === 3) {
+            window.history.back();
+            tapCount = 0;
+        }
+    });
+
+    injectKeyframes();
+    fetchBannerText();
+</script>
+</body>
+</html>
+
+
